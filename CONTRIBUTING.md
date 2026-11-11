@@ -28,3 +28,5 @@ for this single-maintainer workflow; feedback and review are welcome.
 The five workflows cover setup, publishing, scheduling, status and reports.
 Retain account selection, confirmation previews, safe media staging and verified
 completion when changing their instructions.
+
+Contributions to this repository are licensed under [MIT](LICENSE).

@@ -25,6 +25,8 @@ jobs:
           skills = {'setup', 'publish', 'schedule', 'status', 'report'}
           manifest = json.loads((plugin / 'plugin.json').read_text())
           assert manifest['name'] == 'pushwing'
+          assert manifest['license'] == 'MIT'
+          assert (plugin / 'LICENSE').read_text() == (root / 'LICENSE').read_text()
           assert re.fullmatch(r'(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)', manifest['version'])
           assert manifest['$schema'] == 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json'
           host = manifest['extensions']['com.openai']
@@ -45,7 +47,7 @@ jobs:
           assert entry['source'] == {'source': 'local', 'path': './plugins/pushwing'}
           assert entry['policy'] == {'installation': 'AVAILABLE', 'authentication': 'ON_INSTALL'}
           assert entry['category'] == 'Productivity'
-          expected = {'README.md', 'plugin.json', 'mcp.json', 'assets/icon.svg'}
+          expected = {'README.md', 'LICENSE', 'plugin.json', 'mcp.json', 'assets/icon.svg'}
           for name in skills:
               expected |= {f'skills/{name}/SKILL.md', f'skills/{name}/agents/openai.yaml'}
               text = (plugin / f'skills/{name}/SKILL.md').read_text()

@@ -24,3 +24,10 @@ Installation and OAuth consent do not authorize publication.
 `review-cases.json` contains generic plans for a future directory submission.
 Real fixtures and recorded results remain required; keep private setup notes
 outside this public repository.
+
+## User-confirmed check — 11 November 2026
+
+The owner confirmed client testing of the latest released plugins before this
+MIT-license update. Exact client versions and per-workflow transcripts were not
+provided. This confirmation is separate from the formal directory review cases,
+which still require fixtures and recorded results.

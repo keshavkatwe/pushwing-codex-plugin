@@ -1,14 +1,19 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "pushwing",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Publish, schedule, track and report on your own YouTube and Instagram accounts.",
   "author": {
     "name": "Pushwing",
     "url": "https://pushwing.com"
   },
   "homepage": "https://pushwing.com",
-  "keywords": ["youtube", "instagram", "publishing", "analytics"],
+  "keywords": [
+    "youtube",
+    "instagram",
+    "publishing",
+    "analytics"
+  ],
   "extensions": {
     "com.openai": {
       "onboardingSkill": "./skills/setup/SKILL.md",
@@ -38,5 +43,6 @@
       }
     }
   },
-  "repository": "https://github.com/keshavkatwe/pushwing-codex-plugin"
+  "repository": "https://github.com/keshavkatwe/pushwing-codex-plugin",
+  "license": "MIT"
 }

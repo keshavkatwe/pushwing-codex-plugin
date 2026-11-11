@@ -7,6 +7,7 @@
     <a href="https://github.com/keshavkatwe/pushwing-codex-plugin/actions/workflows/validate.yml"><img src="https://github.com/keshavkatwe/pushwing-codex-plugin/actions/workflows/validate.yml/badge.svg?branch=main" alt="Plugin validation" /></a>
     <img src="https://img.shields.io/badge/works_with-Codex%20%2B%20ChatGPT-B2C6FF?style=flat-square" alt="Works with Codex &amp; ChatGPT" />
     <img src="https://img.shields.io/badge/connection-hosted_MCP-18181B?style=flat-square" alt="Hosted MCP connection" />
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-B2C6FF?style=flat-square" alt="MIT license" /></a>
   </p>
   <p>
     <a href="https://pushwing.com">Website</a> ·
@@ -100,6 +101,11 @@ official directory approval are separate; check each intended client surface.
 - [Suggest an improvement](https://github.com/keshavkatwe/pushwing-codex-plugin/issues/new/choose)
 - [Contribute](CONTRIBUTING.md) · [Release checklist](docs/RELEASE.md)
 - [Report a security issue privately](SECURITY.md)
+
+## License
+
+[MIT](LICENSE) covers the files in this repository. The hosted Pushwing service
+remains governed by its own [terms](https://pushwing.com/terms).
 
 ## Other clients
 

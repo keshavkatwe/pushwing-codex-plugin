@@ -38,3 +38,5 @@ Claude is maintained in
 [pushwing-claude-plugin](https://github.com/keshavkatwe/pushwing-claude-plugin).
 
 [Privacy](https://pushwing.com/privacy) · [Terms](https://pushwing.com/terms) · [Support](https://pushwing.com/support)
+
+[MIT license](LICENSE) applies to this package. Hosted services retain their own terms.

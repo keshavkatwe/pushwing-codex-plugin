@@ -1,0 +1,32 @@
+name: Bug report
+description: Report a reproducible plugin problem.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: Keep credentials, signed URLs and private media out of this report.
+  - type: input
+    id: versions
+    attributes:
+      label: Client and plugin versions
+      placeholder: Client name/version and Pushwing plugin version
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the selected workflow and a minimal example.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Redacted diagnostics or screenshots
+      description: Remove tokens, account details, private files and signed URLs.

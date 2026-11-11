@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pushwing: Setup"
+  short_description: "Check accounts and limits"
+  default_prompt: "Use $pushwing:setup to check accounts and limits."

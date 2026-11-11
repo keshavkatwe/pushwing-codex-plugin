@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pushwing: Schedule"
+  short_description: "Plan a future publication"
+  default_prompt: "Use $pushwing:schedule to plan a future publication."

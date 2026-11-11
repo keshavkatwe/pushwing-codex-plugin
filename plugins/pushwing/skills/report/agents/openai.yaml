@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pushwing: Report"
+  short_description: "Review account performance"
+  default_prompt: "Use $pushwing:report to review account performance."

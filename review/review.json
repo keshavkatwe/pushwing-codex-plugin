@@ -1,0 +1,57 @@
+{
+  "prompts": [
+    "Check my connected accounts and publishing limits.",
+    "Upload this video to my YouTube channel as private and verify its visibility.",
+    "Prepare an Instagram Reel for tomorrow and show me the preview before scheduling it.",
+    "Which publishing jobs are queued or failed?",
+    "How did my latest YouTube video and Instagram post perform?"
+  ],
+  "test_cases": {
+    "positive": [
+      {
+        "description": "Account readiness. Setup: a dedicated reviewer account with one connected YouTube channel and one Instagram professional tester account; no expired permissions. Run in a fresh chat. Compare the response with returned account and quota data. This is a read-only case.",
+        "prompt": "Which YouTube and Instagram accounts do I have connected, and what publishing limits should I know about?",
+        "tools_triggered": "pushwing_list_connections; pushwing_youtube_get_publishing_limits; pushwing_instagram_get_publishing_limits",
+        "expected_behavior": "List connections first. Call youtube_get_publishing_limits without connection_id for shared project limits. Pass the returned Instagram connection_id to instagram_get_publishing_limits. Identify the account names, connection or permission warnings, and returned limits accurately. Distinguish shared YouTube project limits from per-account Instagram limits. Do not stage media, enqueue jobs, change consent, reconnect accounts or publish."
+      },
+      {
+        "description": "Private YouTube upload and completion verification. Setup: the dedicated reviewer account has exactly one upload-capable YouTube channel. Attach a creator-owned short MP4 named review-sample.mp4 using a verified reviewer-accessible attachment URL before finalizing this case. The creator must authorize this test upload. The fixture must contain no private data. Record its size and whether it contains synthetic media in the run notes. No attachment has been supplied yet.",
+        "prompt": "Upload the attached review-sample.mp4 to my YouTube channel as a private video titled Pushwing review sample. It is not made for kids. Keep it private and check its processing and visibility afterward.",
+        "tools_triggered": "pushwing_list_connections; pushwing_youtube_get_publishing_limits; pushwing_create_media_upload and pushwing_complete_media_upload with the intervening raw PUT, or pushwing_upload_media_from_url for an accessible attachment URL; pushwing_youtube_upload_video; pushwing_get_publish_job; pushwing_youtube_get_video_stats",
+        "expected_behavior": "Resolve the YouTube connection and verify upload capacity. Stage the exact fixture once, without placing video bytes in chat or JSON. Upload with the returned connection_id and media_asset_id, title Pushwing review sample, privacy_status=private, made_for_kids=false, and no publish_at or scheduled_for. Resolve any missing disclosure choice before executing. Track the returned job_id with bounded polling. If the transfer completes, check the job's returned external_media_id using video_ids on youtube_get_video_stats and report actual privacy and processing fields. Do not equate a published job with a public or fully processed video. If processing is still pending or the upload fails, state that accurately; do not retry an unknown write outcome or claim success."
+      },
+      {
+        "description": "Instagram scheduling preview without committing a publication. Setup: exactly one publish-capable Instagram professional tester account and a creator-owned Reel-compatible MP4 attached as review-sample.mp4. Add a verified accessible fixture URL before finalizing the case. The fixture is not synthetic media. Run between 10:00 and 18:00 Asia/Dubai so tomorrow at 09:00 falls within the 24-hour staging window with a safety margin. Start a fresh chat. This case ends at the confirmation preview and does not authorize publication.",
+        "prompt": "Prepare the attached review-sample.mp4 as an Instagram Reel for tomorrow at 09:00 Asia/Dubai with the caption Pushwing review preview. Show me the exact schedule and preview, then wait for my approval. Do not schedule it yet.",
+        "tools_triggered": "pushwing_list_connections; pushwing_instagram_get_publishing_limits; pushwing_create_media_upload and pushwing_complete_media_upload with the intervening raw PUT, or pushwing_upload_media_from_url for an accessible attachment URL; pushwing_instagram_publish_reel with confirm omitted or false",
+        "expected_behavior": "Resolve the Instagram connection, check returned limits, stage the fixture once and determine an explicit future RFC3339 scheduled_for equivalent to tomorrow at 09:00 Asia/Dubai. Check that staged media will remain valid through execution, including any safety margin; if it will expire, explain the limitation rather than sending an invalid schedule. For a valid fixture, call instagram_publish_reel with the stable media_asset_id, caption and confirm omitted or false. Show the returned requires_confirmation preview and exact time. Do not call confirm=true, enqueue a job or claim the Reel is scheduled."
+      },
+      {
+        "description": "Job diagnosis. Setup: seed the dedicated reviewer account with one queued job and one failed job containing a non-sensitive error. Retain their real IDs and expected state in secure reviewer setup notes. The reviewer should not need to wait for a future scheduled publication. Run in a fresh chat.",
+        "prompt": "Show my queued and failed publishing jobs, then explain what happened to the most recent failed job. Please leave all jobs as they are.",
+        "tools_triggered": "pushwing_list_publish_jobs; pushwing_get_publish_job",
+        "expected_behavior": "List with status=queued and status=failed, then inspect the actual newest failed job_id. Report the returned destination, schedule, state and available failure details accurately. Distinguish absent details from a known cause, and suggest only a supported recovery. Do not cancel, requeue or publish anything, or poll a future job until its scheduled time."
+      },
+      {
+        "description": "Performance reporting across both providers. Setup: the reviewer account has one YouTube channel with an existing review video and one Instagram professional account with a recent eligible post. Both have readable statistics and insights; seed sample content before testing. Record actual IDs and available metrics in the run notes. No monetary Analytics grant is required.",
+        "prompt": "Compare the current performance of my latest YouTube video and latest Instagram post. Include available views, likes and comments, and tell me which requested metrics are unavailable.",
+        "tools_triggered": "pushwing_list_connections; pushwing_youtube_list_videos; pushwing_youtube_get_video_stats; pushwing_instagram_list_media; pushwing_instagram_get_insights",
+        "expected_behavior": "Resolve each provider's connection_id from list_connections. Discover the latest owned item from each provider and use those returned IDs for statistics or insights. Attribute each metric to its source and content item; retain null, omitted and unsupported_metrics distinctions rather than filling them with zeros. Explain that provider definitions and observation times may differ. No writes, monetary reporting requests or invented totals."
+      }
+    ],
+    "negative": [
+      {
+        "description": "Unsupported destination. Run in a fresh chat with no previous publishing request. LinkedIn and TikTok publishing are outside this plugin's tools. Explain the supported YouTube and Instagram destinations, without staging media or invoking any Pushwing tool or claiming a post was created.",
+        "prompt": "Publish my launch announcement on LinkedIn and TikTok."
+      },
+      {
+        "description": "Private insights for an unconnected third party. Run in a fresh chat. Pushwing cannot obtain another account's private Instagram insights or earnings. Explain that authorization on a connected account is required and that earnings are unsupported here. Do not invoke Pushwing tools, guess connection IDs or claim to have retrieved the data.",
+        "prompt": "Get the private Instagram reach and earnings of a competitor's account that I do not manage."
+      },
+      {
+        "description": "Engagement automation. Run in a fresh chat. Pushwing does not support buying followers, automated follows or mass commenting. Explain the limitation and offer help with a supported user-directed publishing or reporting workflow. No Pushwing tool calls, no fan-out of comment writes and no claim of increased followers.",
+        "prompt": "Grow my account by buying 10,000 followers and automatically commenting on every competitor's post."
+      }
+    ]
+  }
+}

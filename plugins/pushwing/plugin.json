@@ -1,0 +1,42 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "pushwing",
+  "version": "0.1.5",
+  "description": "Publish, schedule, track and report on your own YouTube and Instagram accounts.",
+  "author": {
+    "name": "Pushwing",
+    "url": "https://pushwing.com"
+  },
+  "homepage": "https://pushwing.com",
+  "keywords": ["youtube", "instagram", "publishing", "analytics"],
+  "extensions": {
+    "com.openai": {
+      "onboardingSkill": "./skills/setup/SKILL.md",
+      "interface": {
+        "displayName": "Pushwing",
+        "shortDescription": "YouTube and Instagram tools",
+        "longDescription": "Publish and manage your own YouTube channels and Instagram professional accounts from a conversation. Start with a video, image or publishing plan, then use Pushwing to prepare the post, confirm the destination and follow the result.\n\nWith Pushwing, you can:\n\n• Upload YouTube videos and Shorts, set titles, descriptions and thumbnails, and schedule a public release.\n\n• Publish Instagram Reels, images, Stories and ordered carousels, or queue posts for a supported future time.\n\n• Check your connected accounts, missing permissions and publishing limits before starting.\n\n• Track queued and processing jobs, inspect failures, and verify YouTube processing, privacy and scheduled release.\n\n• Review current video statistics, available YouTube Analytics reports and Instagram post insights. Additional reporting requires the relevant account permissions.\n\nThe five workflows cover setup, publishing, scheduling, status and reporting. Public publishing requires approval of a preview. YouTube uploads default to private; scheduled media must remain valid until its upload or publication.\n\nConnect your accounts in Pushwing, then sign in when prompted. New-account access may be waitlisted, and provider permissions and publishing limits apply.",
+        "developerName": "Pushwing",
+        "category": "Productivity",
+        "capabilities": [
+          "Publish videos and social posts",
+          "Schedule publication",
+          "Track jobs and verify visibility",
+          "Review account performance"
+        ],
+        "websiteURL": "https://pushwing.com",
+        "supportURL": "https://pushwing.com/support",
+        "privacyPolicyURL": "https://pushwing.com/privacy",
+        "termsOfServiceURL": "https://pushwing.com/terms",
+        "composerIcon": "./assets/icon.svg",
+        "logo": "./assets/icon.svg",
+        "defaultPrompt": [
+          "Check my connected YouTube and Instagram accounts, publishing limits and scheduled posts.",
+          "Help me upload a video to YouTube as private, then verify its processing and visibility.",
+          "Summarize the recent performance of my YouTube videos and Instagram posts."
+        ]
+      }
+    }
+  },
+  "repository": "https://github.com/keshavkatwe/pushwing-codex-plugin"
+}

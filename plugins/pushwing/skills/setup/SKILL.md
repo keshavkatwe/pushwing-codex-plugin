@@ -7,8 +7,8 @@ description: "Check Pushwing setup, connected YouTube channels and Instagram acc
 
 1. Discover the bundled Pushwing tools. If OAuth is needed, use the host's normal Authenticate/Connect action. Each user signs in to their own Pushwing account. Registration may be waitlisted; explain the actual sign-in result rather than promising immediate access.
 2. Call `pushwing_list_connections`. Show each account's provider, name/handle, connection status and any missing permissions. Do not request the user's email/profile unless it is needed to resolve an identity question.
-3. For YouTube, call `pushwing_youtube_get_publishing_limits` with `{}`. The upload and quota pools are shared across the Pushwing project; don't pass a connection ID or describe the remaining estimate as a per-channel guarantee.
-4. For a selected Instagram account with publishing access, call `pushwing_instagram_get_publishing_limits` using its `connection_id`. If access is missing, explain the missing permission and reconnect path. If several accounts are connected, ask which one to inspect before additional account reads.
+3. Call `pushwing_get_usage_limits` with `{}` to check personal publishing allowances, reservations, file/queue/API budgets and operation-specific availability across the user’s accounts. Personal available slots are not a provider-availability guarantee. Shared YouTube counters are operator-only; never infer or expose them.
+4. For selected-account context, repeat `pushwing_get_usage_limits` with its owned `connection_id`. Personal allowances remain user-wide. Show Instagram’s live account capacity separately from the Pushwing allowance; respect its returned rolling window and never invent a reset. Explain missing permissions/reconnect actions. Ask which account to inspect when the destination is unclear.
 5. Finish with a short readiness summary: account, available capabilities, actual remaining limits when returned, and one concrete next action. Account linking and disconnecting happen in the dashboard.
 
 This is a read-only workflow. Do not stage media, upload a test video, create jobs, change connections or post content.

@@ -87,8 +87,8 @@ values are authoritative. Assets expire after 24 hours and upload URLs after one
 hour. If local file transfer is unavailable, use an accessible URL or staged asset.
 
 Account permissions, publishing limits and optional analytics access depend on
-the live service. YouTube quota is shared across Pushwing. The plugin does not
-persist analytics locally. See the [privacy policy](https://pushwing.com/privacy)
+the live service. Check your personal allowances and operation availability with
+`pushwing_get_usage_limits`. The plugin does not persist analytics locally. See the [privacy policy](https://pushwing.com/privacy)
 and [terms](https://pushwing.com/terms) for service-side handling.
 
 ## Updates and support

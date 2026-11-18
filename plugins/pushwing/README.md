@@ -40,3 +40,7 @@ Claude is maintained in
 [Privacy](https://pushwing.com/privacy) · [Terms](https://pushwing.com/terms) · [Support](https://pushwing.com/support)
 
 [MIT license](LICENSE) applies to this package. Hosted services retain their own terms.
+
+## MCP 0.12.0 migration
+
+This plugin supports MCP 0.12.0 and uses `pushwing_get_usage_limits` for personal allowances, reservations, resource budgets and account capacity. Allowances apply across your accounts; Instagram account capacity is separate. Refresh/rescan the client catalog to discover the replacement tool. OAuth reconnection is only for authentication repair or changed consent.

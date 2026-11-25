@@ -40,3 +40,7 @@ approval and publication are separate actions.
 
 - [OpenAI packaging](https://developers.openai.com/plugins/build/plugins)
 - [Submission requirements](https://developers.openai.com/plugins/deploy/submission)
+
+## Prepared guidance for MCP 0.13
+
+New publication reviews use `pushwing_prepare_publish_preview`, including private YouTube uploads, followed by the named original publishing tool after approval. Pass the resolved IANA `timezone` at the preparation root when its schema supports it. Account/usage checks remain plain reads; their display tools are for explicit requests. Future queued jobs are acknowledged without polling until their execution date; native YouTube publication schedules still require verifying the immediate upload. Older catalogs use the documented safe fallback and need a refresh after the server rollout. This source update does not deploy MCP, release the plugin or modify installed caches.

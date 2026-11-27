@@ -13,16 +13,19 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+      - name: Install validation dependency
+        run: python3 -m pip install 'PyYAML>=6,<7'
       - name: Check the installable package
         shell: bash
         run: |
           python3 - <<'PY'
-          import json, re
+          import json, re, yaml
           from pathlib import Path
 
           root = Path.cwd()
           plugin = root / 'plugins/pushwing'
-          skills = {'setup', 'publish', 'schedule', 'status', 'report'}
+          publishing_skills = {'setup', 'publish', 'schedule', 'status', 'report'}
+          skills = publishing_skills | {'brand-setup', 'new-post', 'continue-post', 'review-post'}
           manifest = json.loads((plugin / 'plugin.json').read_text())
           assert manifest['name'] == 'pushwing'
           assert manifest['license'] == 'MIT'
@@ -53,16 +56,23 @@ jobs:
               text = (plugin / f'skills/{name}/SKILL.md').read_text()
               assert text.startswith('---\n') and '\n---\n' in text[4:]
               header, body = text[4:].split('\n---\n', 1)
-              assert f'name: {name}' in header and re.search(r'^description: .+', header, re.M)
-              assert '## Shared Pushwing workflow' in body
-              assert '`pushwing_list_connections`' in body
-              assert 'confirm=false' in body and 'Wait for the user to approve' in body
+              metadata = yaml.safe_load(header)
+              assert metadata['name'] == name and isinstance(metadata['description'], str) and metadata['description'].strip()
+              assert body.strip() and len(text.encode()) <= 1024 * 1024
+              agent = yaml.safe_load((plugin / f'skills/{name}/agents/openai.yaml').read_text())
+              assert isinstance(agent['interface']['display_name'], str) and agent['interface']['display_name'].strip()
+              assert 0 < len(agent['interface']['short_description']) <= 64
+              assert f'$pushwing:{name}' in agent['interface']['default_prompt']
+              if name in publishing_skills:
+                  assert '## Shared Pushwing workflow' in body
+                  assert '`pushwing_list_connections`' in body
+                  assert 'confirm=false' in body and 'Wait for the user to approve' in body
           paths = list(plugin.rglob('*'))
           assert not any(path.is_symlink() for path in paths)
           assert {path.relative_to(plugin).as_posix() for path in paths if path.is_file()} == expected
           for path in root.rglob('*.json'):
               json.loads(path.read_text())
-          print(f"Validated Pushwing {manifest['version']}: marketplace, hosted MCP and five skills")
+          print(f"Validated Pushwing {manifest['version']}: marketplace, hosted MCP and nine skills")
           PY
       - name: Package the plugin
         working-directory: plugins/pushwing

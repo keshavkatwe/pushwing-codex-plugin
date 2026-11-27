@@ -17,6 +17,12 @@ For cancelling a queued Pushwing job, first read it with `pushwing_get_publish_j
 
 There is no generic job-reschedule tool. Explain the required cancel-and-recreate operation and its duplication/expiry risks before making changes; never invent an update endpoint.
 
+## Publishing a saved Content record
+
+When the user selected a saved Pushwing post, discover `pushwing_get_workspace_brand` and `pushwing_get_workspace_episode` and load its current revision, pinned context, exact intended account and review evidence. Resolve accounts with `pushwing_list_connections`; verify the actual destination rather than assuming a default. Respect applicable production/script/copy/creative/render gates and use the accepted current files, hashes and ordered copy. Recompute each accessible file’s SHA-256 and compare it with the accepted revision before staging, including every carousel item, cover and thumbnail in order. If bytes differ or cannot be verified, stop the saved-post handoff: report the mismatch or access limitation and obtain a corrected revision and its applicable review decisions before proceeding. A reused filename does not establish accepted bytes. Ask for an unresolved review decision instead of treating a delivery note as acceptance. If the saved record cannot be retrieved, explain the missing workspace capability rather than claiming its approval was verified. Do not make workspace records mandatory for a user-selected standalone media file.
+
+Workspace references are not staged media, and workspace review is not publication approval. Continue through the existing staging and concrete publishing-preview flow below. There is no automatic link between a workspace post and a publish job; when publishing or scheduling a saved post, save the actual returned job ID and state in a progress note as part of that task, identifying the exact submitted revision ID and destination. Append verified video/media IDs and terminal or future-queued state when available. Use the latest expectedRevision for the note while keeping the submitted revision explicit; after a conflict or uncertain result, reload and inspect existing notes before retrying. A note failure is a separate bookkeeping failure and must never trigger another publication. Standalone media publication does not create a workspace record.
+
 ## Shared Pushwing workflow
 
 Follow the user's explicit instructions within the current tool contracts. These skills guide the workflow; the server owns authentication, account authorization and provider rules.

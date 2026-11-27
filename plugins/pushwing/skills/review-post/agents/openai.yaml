@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pushwing: Review post"
+  short_description: "Review content and record separate decisions"
+  default_prompt: "Use $pushwing:review-post to check the review state of my saved post."

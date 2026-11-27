@@ -6,7 +6,7 @@ script to install.
 1. Edit `plugins/pushwing/` on a feature branch from `main`.
 2. Preserve the name `pushwing`, marketplace `pushwing-plugins`, portable schemas
    and hosted OAuth endpoint. Bump `plugins/pushwing/plugin.json` for a release.
-3. Check the five skills, presentation YAML and referenced assets. Test the
+3. Check all nine skills, presentation YAML and referenced assets. Test the
    intended client with read-only setup/status/report requests; record the exact
    installed version. A write test needs a selected account, media and approval.
 4. Open a PR. The `validate` check parses JSON, checks package structure and
@@ -44,3 +44,14 @@ approval and publication are separate actions.
 ## Prepared guidance for MCP 0.13
 
 New publication reviews use `pushwing_prepare_publish_preview`, including private YouTube uploads, followed by the named original publishing tool after approval. Pass the resolved IANA `timezone` at the preparation root when its schema supports it. Account/usage checks remain plain reads; their display tools are for explicit requests. Future queued jobs are acknowledged without polling until their execution date; native YouTube publication schedules still require verifying the immediate upload. Older catalogs use the documented safe fallback and need a refresh after the server rollout. This source update does not deploy MCP, release the plugin or modify installed caches.
+
+## Prepared 0.2.0 workspace workflows
+
+Four additional skills cover brand-setup, new-post, continue-post and review-post.
+The existing account setup remains read-only; publish/schedule can hand off a
+selected saved post without requiring workspace records for standalone files.
+Before release, deploy/verify the MCP workspace catalog separately, refresh it
+in the intended client, and verify all nine skill entries. Preserve endpoint,
+OAuth scope, app identity and installed-cache configuration. This preparation
+changes source/package versions only; no commit, installation, server deployment,
+marketplace publication or fresh-client acceptance is implied.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pushwing: New post"
+  short_description: "Start a post with saved brand context"
+  default_prompt: "Use $pushwing:new-post to start a draft for my brand and chosen account."

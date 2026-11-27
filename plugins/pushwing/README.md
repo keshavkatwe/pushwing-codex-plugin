@@ -8,6 +8,10 @@ publication affect real accounts. Registration may be waitlisted.
 | Workflow | Codex skill |
 | --- | --- |
 | Setup and readiness | `$pushwing:setup` |
+| Saved brand setup | `$pushwing:brand-setup` |
+| New saved draft | `$pushwing:new-post` |
+| Resume, revise and hand off | `$pushwing:continue-post` |
+| Separate content reviews | `$pushwing:review-post` |
 | Immediate publishing | `$pushwing:publish` |
 | Future publication | `$pushwing:schedule` |
 | Job and visibility checks | `$pushwing:status` |
@@ -44,3 +48,22 @@ Claude is maintained in
 ## MCP 0.12.0 migration
 
 This plugin supports MCP 0.12.0 and uses `pushwing_get_usage_limits` for personal allowances, reservations, resource budgets and account capacity. Allowances apply across your accounts; Instagram account capacity is separate. Refresh/rescan the client catalog to discover the replacement tool. OAuth reconnection is only for authentication repair or changed consent.
+
+## Saved brand and content workflows (prepared 0.2.0)
+
+Brand setup, new post, continue post and review post require the workspace tools
+introduced in MCP 0.14. They are prepared alongside the server feature; package
+validation does not mean those tools are deployed or present in your client.
+If they are missing, the skill explains the missing capability and leaves any
+draft unsaved. Refresh the tool catalog after the server rollout; normal plugin
+updates do not require OAuth reconnection.
+
+A brand stores channel identity, structured guidance and reusable playbooks.
+Content supports image, carousel, reel, story, video and short, with an exact
+intended account and independent layout. Existing revisions retain pinned context;
+new brand guidance is adopted only when explicitly chosen. Save-progress notes
+support a fresh-chat handoff. Content reviews and publication approval are separate.
+Host-side SKILL.md/HyperFrames production skills still run in the AI client;
+saving a playbook does not install or execute a renderer.
+
+These source changes are not installed, published or verified in a fresh client.

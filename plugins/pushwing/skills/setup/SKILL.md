@@ -3,7 +3,9 @@ name: setup
 description: "Check Pushwing setup, connected YouTube channels and Instagram accounts, missing permissions, or publishing limits. Use when the user wants to connect Pushwing or check readiness without publishing."
 ---
 
-# Set up Pushwing
+# Check Pushwing connections
+
+This is account readiness. Creating or editing a saved brand kit/playbooks belongs to the brand-setup workflow; it does not require a publishing-limit check.
 
 1. Discover the bundled Pushwing tools. If OAuth is needed, use the host's normal Authenticate/Connect action. Each user signs in to their own Pushwing account. Registration may be waitlisted; explain the actual sign-in result rather than promising immediate access.
 2. Call `pushwing_list_connections`. Show each account's provider, name/handle, connection status and any missing permissions. Do not request the user's email/profile unless it is needed to resolve an identity question.

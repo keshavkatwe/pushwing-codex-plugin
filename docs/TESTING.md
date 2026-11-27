@@ -1,8 +1,8 @@
 # Client checks
 
-The small CI check validates the committed package and builds an optional ZIP.
-It does not install the plugin, authenticate or call providers. No Bun, TypeScript
-or test workspace is required to use this repository.
+CI validates the committed package, tests discovery failure detection and checks
+an isolated native marketplace installation against local fixtures. It also builds
+an optional ZIP. No build tool or test workspace is needed to use the plugin.
 
 For manual checks, use a new chat and record the exact installed version.
 Installation and OAuth consent do not authorize publication.
@@ -24,6 +24,76 @@ Installation and OAuth consent do not authorize publication.
 `review-cases.json` contains generic plans for a future directory submission.
 Real fixtures and recorded results remain required; keep private setup notes
 outside this public repository.
+
+## Automated discovery regression
+
+CI runs package validation, then these checks:
+
+```sh
+python3 -m unittest discover -s tests -v
+python3 scripts/smoke_discovery.py --host codex
+```
+
+CI pins the test client in `.github/workflows/validate.yml`. The smoke test uses the native
+marketplace installer with an isolated configuration directory. It changes only
+a temporary copy's MCP URL to a loopback fixture; the committed production URL
+and the user's installed packages are untouched. No user credentials are copied,
+no provider handlers run and the model returns canned local responses. No paid
+model request or publishing action is required.
+
+The fixture advertises the 97 tool names recorded from MCP 0.14.2, with synthetic
+deeply nested preview/brand input schemas, under 35-entry and 100-entry page
+limits. Codex must expose every entry through code-mode `ALL_TOOLS` with a
+callable handle. Claude Code must advertise every MCP tool to the local model
+fixture with tool search disabled so deferred loading cannot hide the inventory.
+Both must follow continuation cursors without executing a tool. Missing or
+uncallable tools fail; the negative test specifically rejects the observed
+33-tool subset. Compatible additional tools are allowed.
+
+These are controlled CLI integration checks. They do not certify OAuth, the
+desktop app's marketplace-to-model handoff, provider writes or every host/model
+configuration. Keep those acceptance results separate. When the live MCP adds
+tools, update `scripts/expected-tools.json` from a verified authenticated catalog;
+do not lower its requirements merely to accept an incomplete client.
+
+## Real-client catalog acceptance
+
+Use a new conversation after installing/updating the intended package. Record
+the plugin version, client/build, connection type and server version. Check
+**model-facing availability**, not just the server's `tools/list` count. The
+current baseline is MCP 0.14.2 with 97 tools, including
+`pushwing_prepare_publish_preview`, `pushwing_save_workspace_brand` and all 56
+YouTube tools.
+
+Export one connection at a time; do not combine duplicate marketplace and custom
+registrations. In a Codex code-mode host, use the matching connection prefix
+(`mcp__pushwing__` for the local marketplace server, or
+`mcp__codex_apps__pushwing_` for the observed custom connection), for example:
+
+```js
+text(ALL_TOOLS.filter(t => t.name.startsWith('mcp__pushwing__')).map(t => ({
+  name: t.name,
+  callable: typeof tools[t.name] === 'function'
+})));
+```
+
+Save only the returned JSON array, then run:
+
+```sh
+python3 scripts/check_discovery.py /absolute/path/to/tool-inventory.json
+```
+
+The same checker accepts canonical names and Claude MCP names. For other hosts,
+use their supported tool inventory/export surface; do not invent a tool list or
+count a model's prose as discovery evidence. The check reads a local export and
+does not call tools or require tokens. Keep credentials and personal data out of
+reports.
+
+If server discovery is complete but model-facing tools are missing, record both
+counts and connection types. A version bump or plugin reinstall is not proof of
+a refreshed catalog. The custom MCP connection to the same hosted endpoint is a
+working fallback observed in Codex; it is not proof the marketplace path is fixed.
+Do not reconnect OAuth unless authentication is actually broken or consent changed.
 
 ## User-confirmed check — 11 November 2026
 

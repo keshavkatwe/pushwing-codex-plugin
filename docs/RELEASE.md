@@ -41,17 +41,31 @@ approval and publication are separate actions.
 - [OpenAI packaging](https://developers.openai.com/plugins/build/plugins)
 - [Submission requirements](https://developers.openai.com/plugins/deploy/submission)
 
-## Prepared guidance for MCP 0.13
+## Publishing guidance for MCP 0.13 and later
 
-New publication reviews use `pushwing_prepare_publish_preview`, including private YouTube uploads, followed by the named original publishing tool after approval. Pass the resolved IANA `timezone` at the preparation root when its schema supports it. Account/usage checks remain plain reads; their display tools are for explicit requests. Future queued jobs are acknowledged without polling until their execution date; native YouTube publication schedules still require verifying the immediate upload. Older catalogs use the documented safe fallback and need a refresh after the server rollout. This source update does not deploy MCP, release the plugin or modify installed caches.
+New publication reviews use `pushwing_prepare_publish_preview`, including private YouTube uploads, followed by the named original publishing tool after approval. Pass the resolved IANA `timezone` at the preparation root when its schema supports it. Account/usage checks remain plain reads; their display tools are for explicit requests. Future queued jobs are acknowledged without polling until their execution date; native YouTube publication schedules still require verifying the immediate upload. Older catalogs use the documented safe fallback and need a refresh after the server rollout. Plugin source updates do not deploy MCP or refresh an installed client catalog.
 
-## Prepared 0.2.0 workspace workflows
+## Workspace workflows from plugin 0.2.0
 
 Four additional skills cover brand-setup, new-post, continue-post and review-post.
 The existing account setup remains read-only; publish/schedule can hand off a
 selected saved post without requiring workspace records for standalone files.
 Before release, deploy/verify the MCP workspace catalog separately, refresh it
 in the intended client, and verify all nine skill entries. Preserve endpoint,
-OAuth scope, app identity and installed-cache configuration. This preparation
-changes source/package versions only; no commit, installation, server deployment,
-marketplace publication or fresh-client acceptance is implied.
+OAuth scope, app identity and installed-cache configuration. Merging source into
+`main` makes it available through this Git marketplace.
+Installation, server deployment, directory publication and fresh-client acceptance
+remain separate actions; record their evidence separately.
+
+## Discovery gate for 0.2.1 and later
+
+Run package validation, `python3 -m unittest discover -s tests -v` and
+`python3 scripts/smoke_discovery.py --host codex` before release. CI runs these
+checks using a pinned client. The isolated native marketplace check must expose
+all 97 baseline tools with both 35- and 100-entry pages. It uses mock local
+endpoints and no real credentials, models or publishing operations.
+
+Before claiming a marketplace fix, separately run the real-client catalog check
+in [TESTING.md](TESTING.md). Preserve the incomplete-catalog failure as a failed
+acceptance result even when the custom-MCP fallback works. Do not infer desktop
+acceptance from the controlled CLI check or package validation.

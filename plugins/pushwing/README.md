@@ -49,11 +49,12 @@ Claude is maintained in
 
 This plugin supports MCP 0.12.0 and uses `pushwing_get_usage_limits` for personal allowances, reservations, resource budgets and account capacity. Allowances apply across your accounts; Instagram account capacity is separate. Refresh/rescan the client catalog to discover the replacement tool. OAuth reconnection is only for authentication repair or changed consent.
 
-## Saved brand and content workflows (prepared 0.2.0)
+## Saved brand and content workflows
 
-Brand setup, new post, continue post and review post require the workspace tools
-introduced in MCP 0.14. They are prepared alongside the server feature; package
-validation does not mean those tools are deployed or present in your client.
+Brand setup, new post, continue post and review post ship from plugin 0.2.0 and
+require the workspace tools introduced in MCP 0.14. The Git marketplace source
+and live service are versioned separately; tool availability must be checked
+in the intended client.
 If they are missing, the skill explains the missing capability and leaves any
 draft unsaved. Refresh the tool catalog after the server rollout; normal plugin
 updates do not require OAuth reconnection.
@@ -66,4 +67,26 @@ support a fresh-chat handoff. Content reviews and publication approval are separ
 Host-side SKILL.md/HyperFrames production skills still run in the AI client;
 saving a playbook does not install or execute a renderer.
 
-These source changes are not installed, published or verified in a fresh client.
+Git marketplace availability, installed package versions and authenticated client
+acceptance are separate. Automated checks cover packaging and controlled CLI
+discovery; they do not establish that a desktop installation exposes every tool.
+
+## Tool discovery troubleshooting
+
+The plugin package supplies nine workflows and declares the hosted MCP connection;
+the live service supplies the tools. Their versions are independent. The current
+MCP 0.14.2 catalog contains **97 tools**, including publishing preview, brand save
+and 56 YouTube tools.
+
+An incomplete marketplace catalog was observed in Codex desktop: 33 tools were
+model-callable even though authenticated server discovery returned 97. Connecting
+`https://mcp.pushwing.com/mcp` through the host's **custom MCP connection flow**
+exposed all 97 tools in the affected setup. Use that as a fallback when necessary;
+the precise desktop integration fault is still unconfirmed. There is no evidence
+that the same failure affects Claude.
+
+Check the actual host tool inventory after installation; a server count, package
+validation or reinstall alone does not prove model-facing availability. The
+custom connection and packaged skills are separate: connecting the server does
+not by itself install the nine skills. See [client checks](https://github.com/keshavkatwe/pushwing-codex-plugin/blob/main/docs/TESTING.md) for the
+discovery checker and the distinction between automated CLI and desktop acceptance.

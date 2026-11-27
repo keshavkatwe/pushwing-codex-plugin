@@ -74,6 +74,15 @@ jobs:
               json.loads(path.read_text())
           print(f"Validated Pushwing {manifest['version']}: marketplace, hosted MCP and nine skills")
           PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install the native test client
+        run: npm install --global @openai/codex@0.171.0-alpha.13
+      - name: Check incomplete discovery detection
+        run: python3 -m unittest discover -s tests -v
+      - name: Check native marketplace tool discovery
+        run: python3 scripts/smoke_discovery.py --host codex
       - name: Package the plugin
         working-directory: plugins/pushwing
         run: zip -q -r "$RUNNER_TEMP/pushwing-openai.zip" .

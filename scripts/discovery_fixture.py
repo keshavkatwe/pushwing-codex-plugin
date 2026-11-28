@@ -81,13 +81,6 @@ class Fixture:
                         item = {'id': 'msg_fixture', 'type': 'message', 'role': 'assistant', 'status': 'completed', 'content': [{'type': 'output_text', 'text': 'Discovery checked.', 'annotations': []}]}
                     response = {'id': 'resp_fixture', 'object': 'response', 'created_at': 0, 'status': 'completed', 'model': data.get('model'), 'output': [item], 'usage': {'input_tokens': 0, 'output_tokens': 0, 'total_tokens': 0}}
                     return self.sse([{'type': 'response.created', 'response': {**response, 'status': 'in_progress', 'output': []}}, {'type': 'response.output_item.added', 'output_index': 0, 'item': item}, {'type': 'response.output_item.done', 'output_index': 0, 'item': item}, {'type': 'response.completed', 'response': response}])
-                if self.path.startswith('/v1/messages/count_tokens'):
-                    return self.reply({'input_tokens': 0})
-                if self.path.startswith('/v1/messages'):
-                    message = {'id': 'msg_fixture', 'type': 'message', 'role': 'assistant', 'model': data.get('model'), 'content': [], 'stop_reason': None, 'stop_sequence': None, 'usage': {'input_tokens': 0, 'output_tokens': 0}}
-                    if not data.get('stream'):
-                        return self.reply({**message, 'content': [{'type': 'text', 'text': 'Discovery checked.'}], 'stop_reason': 'end_turn'})
-                    return self.sse([{'type': 'message_start', 'message': message}, {'type': 'content_block_start', 'index': 0, 'content_block': {'type': 'text', 'text': ''}}, {'type': 'content_block_delta', 'index': 0, 'delta': {'type': 'text_delta', 'text': 'Discovery checked.'}}, {'type': 'content_block_stop', 'index': 0}, {'type': 'message_delta', 'delta': {'stop_reason': 'end_turn', 'stop_sequence': None}, 'usage': {'output_tokens': 0}}, {'type': 'message_stop'}])
                 self.reply({'error': 'Unexpected fixture route'}, 404)
 
         self.server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)

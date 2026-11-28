@@ -1,4 +1,4 @@
-# Pushwing for ChatGPT and Codex
+# Pushwing for Codex
 
 Publish and schedule media, check jobs and review performance on your own YouTube
 channels and Instagram professional accounts through Pushwing. This plugin uses
@@ -78,13 +78,11 @@ the live service supplies the tools. Their versions are independent. The current
 MCP 0.14.2 catalog contains **97 tools**, including publishing preview, brand save
 and 56 YouTube tools.
 
-An incomplete marketplace catalog was observed in Codex desktop: 33 tools were
-model-callable even though authenticated server discovery returned 97. Connecting
-`https://mcp.pushwing.com/mcp` through the host's **custom MCP connection flow**
-exposed all 97 tools in the affected setup. Use that as a fallback when necessary;
-the precise desktop integration fault is still unconfirmed. There is no evidence
-that the same failure affects Claude.
-
+Plugin versions before 0.2.2 used the Agent Plugins manifest, which makes Codex
+silently hide tools once its schema budget is exhausted. Version 0.2.2 uses the
+native Codex manifest; a fresh Codex CLI check against production exposes all
+97 tools. The custom MCP connection can serve as a fallback. Verify the inventory
+in a fresh desktop chat separately after updating.
 Check the actual host tool inventory after installation; a server count, package
 validation or reinstall alone does not prove model-facing availability. The
 custom connection and packaged skills are separate: connecting the server does

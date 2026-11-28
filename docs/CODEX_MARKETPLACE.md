@@ -23,16 +23,15 @@ paging changes do not remove these client limits.
 
 ## Package change
 
-The Git marketplace selects the ready-to-install native package at
-`plugins/pushwing-codex/`. Its `.codex-plugin/plugin.json` keeps the same plugin
-name, version, interface, hosted MCP configuration and nine workflows. It is
-generated from the portable source using `scripts/build_codex_package.py`.
-The portable Agent Plugins package remains complete in `plugins/pushwing/` for
-portable exports. Both packages contain their own required files; installation
-requires no generator or local runtime. CI rejects drift between distributions.
+The repository ships one ready-to-install Codex plugin at `plugins/pushwing/`.
+Its `.codex-plugin/plugin.json` replaces the previous root Agent Plugins manifest,
+keeping the same name, version, interface, hosted MCP configuration and nine
+workflows. The marketplace still selects the original package directory. There
+is no second distribution or package-generation step.
 
-This is a Git marketplace compatibility fix. It does not fix the upstream Codex
-budget or establish acceptance of the portable public directory package.
+This fixes Git marketplace loading through Codex's supported native format; the
+upstream Agent Plugins budget remains unchanged. The old-format control exists
+only as a temporary fixture created by the regression test.
 
 ## Verification on 28 November 2026
 
@@ -40,7 +39,7 @@ Codex CLI 0.171.0-alpha.13, code mode:
 
 | Connection/package | MCP page size | Callable Pushwing tools |
 | --- | --- | --- |
-| Portable Agent Plugins control, complete public schemas and long instructions | 100 | 33 |
+| Legacy-format test control, public input schemas and long instructions | 100 | 33 |
 | Native Git marketplace package, same fixture | 35 | 97 |
 | Native Git marketplace package, same fixture | 100 | 97 |
 | Installed native 0.2.2 package, production MCP and existing OAuth | production | 97 |
@@ -60,6 +59,6 @@ Locally installed preview: **0.2.2** through the supported Codex plugin installe
 Public Git release: **0.2.1** until the new changes are reviewed and merged.
 MCP service version: **0.14.2**, unchanged by this packaging fix.
 
-The regression fixture contains public tool definitions and synthetic long
+The regression fixture contains public input schemas and synthetic long
 instructions only; it contains no credentials or user data. Refresh it alongside
 `scripts/expected-tools.json` when the public server catalog changes.

@@ -31,7 +31,7 @@ CI runs package validation, then these checks:
 
 ```sh
 python3 -m unittest discover -s tests -v
-python3 scripts/smoke_discovery.py --host codex
+python3 scripts/smoke_discovery.py
 ```
 
 CI pins the test client in `.github/workflows/validate.yml`. The smoke test uses the native
@@ -41,14 +41,12 @@ and the user's installed packages are untouched. No user credentials are copied,
 no provider handlers run and the model returns canned local responses. No paid
 model request or publishing action is required.
 
-The fixture advertises the 97 tool names recorded from MCP 0.14.2, with synthetic
-deeply nested preview/brand input schemas, under 35-entry and 100-entry page
-limits. Codex must expose every entry through code-mode `ALL_TOOLS` with a
-callable handle. Claude Code must advertise every MCP tool to the local model
-fixture with tool search disabled so deferred loading cannot hide the inventory.
-Both must follow continuation cursors without executing a tool. Missing or
-uncallable tools fail; the negative test specifically rejects the observed
-33-tool subset. Compatible additional tools are allowed.
+The fixture uses the 97 public input schemas recorded from MCP 0.14.2 and long
+server instructions, with 35-entry and 100-entry page limits. Codex must expose
+every entry through code-mode `ALL_TOOLS` with a callable handle and follow
+continuation cursors without executing a tool. A test-only old-format manifest
+reproduces the observed 33-tool subset; it is never shipped. Missing or
+uncallable native tools fail. Compatible additional tools are allowed.
 
 These are controlled CLI integration checks. They do not certify OAuth, the
 desktop app's marketplace-to-model handoff, provider writes or every host/model
@@ -83,8 +81,7 @@ Save only the returned JSON array, then run:
 python3 scripts/check_discovery.py /absolute/path/to/tool-inventory.json
 ```
 
-The same checker accepts canonical names and Claude MCP names. For other hosts,
-use their supported tool inventory/export surface; do not invent a tool list or
+The checker accepts canonical and Codex MCP names. Do not invent a tool list or
 count a model's prose as discovery evidence. The check reads a local export and
 does not call tools or require tokens. Keep credentials and personal data out of
 reports.
@@ -124,16 +121,18 @@ installed plugin/server versions and actual outputs; do not use production accou
 
 ## Codex native package regression
 
-`python3 scripts/smoke_discovery.py --host codex` installs both package formats
-in temporary profiles using complete public MCP descriptors and long server
-instructions from `tests/fixtures/discovery.json`. The portable control yields
-33 callable tools on the pinned Codex version. The marketplace's native package
-must yield all 97, including both large workspace tools and every YouTube tool,
-with both 35- and 100-entry pages. Never replace this snapshot with empty schemas:
-that misses the Agent Plugins schema-budget failure. Refresh the snapshot and
-expected tool names together when the service catalog changes.
+`python3 scripts/smoke_discovery.py` installs the single Codex package in a
+temporary profile using public input schemas and long instructions from
+`tests/fixtures/discovery.json`. It also constructs the previous Agent Plugins
+manifest inside a disposable test copy to reproduce the 33-tool failure. There
+is no second installable plugin in the repository.
 
-This fixture validates the Git marketplace package, not the public portable
-directory listing, desktop reload behavior or OAuth repair. Production acceptance
-must use the installed native package and `https://mcp.pushwing.com/mcp`, preserve
-the existing OAuth connection, and exclude the custom MCP namespace from the count.
+The native package must yield all 97 callable tools, including the two large
+workspace tools and every YouTube tool, with both 35- and 100-entry pages. Never
+replace the input schemas with empty objects: that misses the schema-budget bug.
+Output schemas are omitted because this regression concerns input specification
+size. Refresh the snapshot and expected names when the service catalog changes.
+
+Production acceptance must use the installed Codex package and the production
+endpoint, preserve existing OAuth and exclude custom-connection names. A fresh
+desktop chat's inventory remains separate from these controlled CLI checks.

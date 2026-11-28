@@ -1,4 +1,0 @@
-interface:
-  display_name: "Pushwing: Brand setup"
-  short_description: "Set up brand context and reusable playbooks"
-  default_prompt: "Use $pushwing:brand-setup to set up a brand from my existing context."

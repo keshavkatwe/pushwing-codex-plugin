@@ -1,4 +1,4 @@
-# Contributing to Pushwing for Codex and ChatGPT
+# Contributing to Pushwing for Codex
 
 Thanks for helping improve Pushwing. This repository owns the client plugin;
 the hosted service is maintained separately.
@@ -15,7 +15,7 @@ of issues and logs. Security reports belong in [private reporting](SECURITY.md).
 1. Fork the repository and create a feature branch from `main`.
 2. Edit the installable files in `plugins/pushwing/`. Keep each skill self-contained.
 3. Preserve the hosted endpoint and stable plugin/marketplace names. For changes
-   to shipped plugin files, bump `plugins/pushwing/plugin.json` once for the release.
+   to shipped plugin files, bump `plugins/pushwing/.codex-plugin/plugin.json` once for the release.
 4. Follow the [release checks](docs/RELEASE.md). Setup/status/report checks are
    read-only; provider writes require a selected test account, media and approval.
 5. Open a focused PR describing the resulting behavior and your validation.
@@ -31,16 +31,13 @@ completion when changing their instructions.
 
 Contributions to this repository are licensed under [MIT](LICENSE).
 
-## Native Codex distribution
+## Codex package checks
 
-Edit the portable source in `plugins/pushwing/`, then run
-`python3 scripts/build_codex_package.py`. Commit both source and generated native
-files. `--check` verifies they match. The marketplace installs the generated
-`plugins/pushwing-codex/` package; its manifest has the same name, version, metadata,
-MCP configuration and skills. Keep the portable root manifest out of the native
-package: Codex prefers it and re-enables its Agent Plugins schema budget.
+Edit the single installable package in `plugins/pushwing/`. Its native manifest
+is `.codex-plugin/plugin.json`; do not add a root `plugin.json`, which would
+select Codex's Agent Plugins loader and reintroduce its schema-budget limit.
 
-`python3 scripts/smoke_discovery.py --host codex` replays complete public tool
-descriptors with long server instructions. It reproduces the portable 33-tool
-control and requires all 97 tools to be callable through the native marketplace
-with page sizes 35 and 100. It executes no MCP tools and uses no real model.
+`python3 scripts/smoke_discovery.py` tests a native marketplace installation with
+public input schemas and long server instructions. It recreates the old manifest
+only in a temporary test directory to reproduce the 33-tool failure, then requires
+all 97 tools with page sizes 35 and 100. No account tools or real models run.

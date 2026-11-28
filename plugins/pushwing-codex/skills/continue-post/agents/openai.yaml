@@ -1,4 +1,0 @@
-interface:
-  display_name: "Pushwing: Continue post"
-  short_description: "Resume a draft, revise it and save progress"
-  default_prompt: "Use $pushwing:continue-post to resume my saved post and recover the next action."

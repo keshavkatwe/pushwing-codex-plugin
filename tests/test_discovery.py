@@ -17,7 +17,7 @@ class DiscoveryContractTest(unittest.TestCase):
             check_inventory(inventory, EXPECTED)
 
     def test_local_and_custom_connection_names_are_accepted(self):
-        for prefix in ('mcp__pushwing__', 'mcp__plugin_pushwing_pushwing__', 'mcp__codex_apps__pushwing_'):
+        for prefix in ('mcp__pushwing__', 'mcp__codex_apps__pushwing_'):
             with self.subTest(prefix=prefix):
                 self.assertEqual(check_inventory([prefix+n for n in EXPECTED], EXPECTED)['required'], 97)
 

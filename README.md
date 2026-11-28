@@ -1,11 +1,11 @@
 <div align="center">
   <img src="./.github/assets/logo.png" width="88" height="88" alt="Pushwing logo" />
-  <h1>Pushwing for Codex &amp; ChatGPT</h1>
+  <h1>Pushwing for Codex</h1>
   <p>Publish anywhere from any AI.</p>
   <p>Publish and schedule your YouTube and Instagram content,<br />track uploads, and understand how your posts perform.</p>
   <p>
     <a href="https://github.com/keshavkatwe/pushwing-codex-plugin/actions/workflows/validate.yml"><img src="https://github.com/keshavkatwe/pushwing-codex-plugin/actions/workflows/validate.yml/badge.svg?branch=main" alt="Plugin validation" /></a>
-    <img src="https://img.shields.io/badge/works_with-Codex%20%2B%20ChatGPT-B2C6FF?style=flat-square" alt="Works with Codex &amp; ChatGPT" />
+    <img src="https://img.shields.io/badge/works_with-Codex-B2C6FF?style=flat-square" alt="Works with Codex" />
     <img src="https://img.shields.io/badge/connection-hosted_MCP-18181B?style=flat-square" alt="Hosted MCP connection" />
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-B2C6FF?style=flat-square" alt="MIT license" /></a>
   </p>
@@ -97,14 +97,13 @@ and [terms](https://pushwing.com/terms) for service-side handling.
 
 ## Codex marketplace compatibility
 
-Plugin 0.2.2 uses Codex's native package from `plugins/pushwing-codex/` for Git
-marketplace installations. It preserves all 97 tool schemas, the existing OAuth
-connection and all nine workflows. The portable Agent Plugins package remains
-in `plugins/pushwing/` for portable exports and directory submission.
+Plugin 0.2.2 uses one native Codex package in `plugins/pushwing/`, with its
+manifest at `.codex-plugin/plugin.json`. It preserves all 97 tool schemas, the
+existing OAuth connection and all nine workflows. No build step is needed.
 
 Codex currently applies a shared 64,000-byte schema budget and an 8,000-byte
 per-tool budget to Agent Plugins, silently hiding tools beyond those limits.
-Pushwing's portable package exposes only 33 tools in Codex 0.171.0-alpha.13.
+Pushwing's previous Agent Plugins manifest exposes only 33 tools in Codex 0.171.0-alpha.13.
 This is tracked in [OpenAI Codex #44308](https://github.com/openai/codex/issues/44308).
 The native Codex package avoids that client limitation without reducing schemas.
 
@@ -170,13 +169,11 @@ the live service supplies the tools. Their versions are independent. The current
 MCP 0.14.2 catalog contains **97 tools**, including publishing preview, brand save
 and 56 YouTube tools.
 
-An incomplete marketplace catalog was observed in Codex desktop: 33 tools were
-model-callable even though authenticated server discovery returned 97. Connecting
-`https://mcp.pushwing.com/mcp` through the host's **custom MCP connection flow**
-exposed all 97 tools in the affected setup. Use that as a fallback when necessary;
-the precise desktop integration fault is still unconfirmed. There is no evidence
-that the same failure affects Claude.
-
+Plugin versions before 0.2.2 used the Agent Plugins manifest, which makes Codex
+silently hide tools once its schema budget is exhausted. Version 0.2.2 uses the
+native Codex manifest; a fresh Codex CLI check against production exposes all
+97 tools. The custom MCP connection can serve as a fallback. Verify the inventory
+in a fresh desktop chat separately after updating.
 Check the actual host tool inventory after installation; a server count, package
 validation or reinstall alone does not prove model-facing availability. The
 custom connection and packaged skills are separate: connecting the server does

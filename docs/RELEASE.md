@@ -81,3 +81,7 @@ aggregate / 8,000-byte per-tool schema limits (OpenAI Codex issue #44308). The
 regression fixture includes public input schemas and long server instructions.
 A temporary old-format control reproduces 33 tools; the native package must
 expose all 97 with both tested page sizes. No MCP release is required.
+
+## Prepared: single publishing preview and scoped approval
+
+The publishing widget is the single media/caption/schedule preview. Its valid Approve schedule click confirms the exact schedule and submits through the original publishing tool without another confirmation question. Normal host approval checks remain; rejections are explained without alternate routes or keyword workarounds. Plain text fallback remains available when the widget cannot render or the user requests it. Source changes only; installation, server deployment and native-host acceptance remain separate.

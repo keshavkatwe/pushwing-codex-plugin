@@ -30,3 +30,17 @@ Retain account selection, confirmation previews, safe media staging and verified
 completion when changing their instructions.
 
 Contributions to this repository are licensed under [MIT](LICENSE).
+
+## Native Codex distribution
+
+Edit the portable source in `plugins/pushwing/`, then run
+`python3 scripts/build_codex_package.py`. Commit both source and generated native
+files. `--check` verifies they match. The marketplace installs the generated
+`plugins/pushwing-codex/` package; its manifest has the same name, version, metadata,
+MCP configuration and skills. Keep the portable root manifest out of the native
+package: Codex prefers it and re-enables its Agent Plugins schema budget.
+
+`python3 scripts/smoke_discovery.py --host codex` replays complete public tool
+descriptors with long server instructions. It reproduces the portable 33-tool
+control and requires all 97 tools to be callable through the native marketplace
+with page sizes 35 and 100. It executes no MCP tools and uses no real model.

@@ -1,17 +1,19 @@
 # Release checklist
 
-The repository is the installable source. There is no build project or runtime
-script to install.
+The repository is the installable source. Users need no build project or runtime
+script. The native Codex distribution is generated and checked into the repository.
 
 1. Edit `plugins/pushwing/` on a feature branch from `main`.
 2. Preserve the name `pushwing`, marketplace `pushwing-plugins`, portable schemas
    and hosted OAuth endpoint. Bump `plugins/pushwing/plugin.json` for a release.
-3. Check all nine skills, presentation YAML and referenced assets. Test the
+3. Run `python3 scripts/build_codex_package.py` after editing the portable source.
+   Commit the generated `plugins/pushwing-codex/` package too; CI checks for drift.
+4. Check all nine skills, presentation YAML and referenced assets. Test the
    intended client with read-only setup/status/report requests; record the exact
    installed version. A write test needs a selected account, media and approval.
-4. Open a PR. The `validate` check parses JSON, checks package structure and
+5. Open a PR. The `validate` check parses JSON, checks package structure and
    confirmation/account rules, and produces an optional ZIP artifact.
-5. Merge after review and successful CI. `main` is protected for all contributors,
+6. Merge after review and successful CI. `main` is protected for all contributors,
    including administrators. Refresh the Git marketplace through the host and
    verify the installed version before recording behavioral results.
 
@@ -69,3 +71,18 @@ Before claiming a marketplace fix, separately run the real-client catalog check
 in [TESTING.md](TESTING.md). Preserve the incomplete-catalog failure as a failed
 acceptance result even when the custom-MCP fallback works. Do not infer desktop
 acceptance from the controlled CLI check or package validation.
+
+## Codex marketplace compatibility from 0.2.2
+
+The Git marketplace selects `plugins/pushwing-codex/`, containing the native
+`.codex-plugin/plugin.json`. The portable Agent Plugins package remains in
+`plugins/pushwing/` and is the source for both distributions. Keep each package
+self-contained and never add the portable root manifest to the native copy.
+
+Codex 0.171.0-alpha.13 silently hides Agent Plugin tools above its 64,000-byte
+aggregate / 8,000-byte per-tool schema limits (OpenAI Codex issue #44308). The
+regression fixture includes complete public input/output schemas and long server
+instructions; its portable control reproduces 33 tools, and the native package
+must expose all 97 with both tested page sizes. No MCP release is required for
+this packaging change. The portable directory upload still needs an upstream
+Codex fix or independent acceptance; this change fixes Git marketplace loading.

@@ -121,3 +121,19 @@ installed plugin/server versions and actual outputs; do not use production accou
 | Workspace tools absent from an older service | Clear capability limitation; useful draft labelled unsaved; no credential/database/endpoint workaround |
 | Publish a standalone file | Existing publish flow works without requiring a brand or workspace review ledger |
 | Publish a selected saved post | Current accepted files/account/copy used in concrete publication preview; note failure never republishes |
+
+## Codex native package regression
+
+`python3 scripts/smoke_discovery.py --host codex` installs both package formats
+in temporary profiles using complete public MCP descriptors and long server
+instructions from `tests/fixtures/discovery.json`. The portable control yields
+33 callable tools on the pinned Codex version. The marketplace's native package
+must yield all 97, including both large workspace tools and every YouTube tool,
+with both 35- and 100-entry pages. Never replace this snapshot with empty schemas:
+that misses the Agent Plugins schema-budget failure. Refresh the snapshot and
+expected tool names together when the service catalog changes.
+
+This fixture validates the Git marketplace package, not the public portable
+directory listing, desktop reload behavior or OAuth repair. Production acceptance
+must use the installed native package and `https://mcp.pushwing.com/mcp`, preserve
+the existing OAuth connection, and exclude the custom MCP namespace from the count.

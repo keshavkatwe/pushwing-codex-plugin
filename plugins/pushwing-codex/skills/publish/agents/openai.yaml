@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pushwing: Publish"
+  short_description: "Publish selected media"
+  default_prompt: "Use $pushwing:publish to publish selected media."

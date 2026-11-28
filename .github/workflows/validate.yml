@@ -47,7 +47,7 @@ jobs:
           assert len(catalog['plugins']) == 1
           entry = catalog['plugins'][0]
           assert entry['name'] == 'pushwing'
-          assert entry['source'] == {'source': 'local', 'path': './plugins/pushwing'}
+          assert entry['source'] == {'source': 'local', 'path': './plugins/pushwing-codex'}
           assert entry['policy'] == {'installation': 'AVAILABLE', 'authentication': 'ON_INSTALL'}
           assert entry['category'] == 'Productivity'
           expected = {'README.md', 'LICENSE', 'plugin.json', 'mcp.json', 'assets/icon.svg'}
@@ -74,6 +74,8 @@ jobs:
               json.loads(path.read_text())
           print(f"Validated Pushwing {manifest['version']}: marketplace, hosted MCP and nine skills")
           PY
+      - name: Check the generated native Codex package
+        run: python3 scripts/build_codex_package.py --check
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -86,8 +88,16 @@ jobs:
       - name: Package the plugin
         working-directory: plugins/pushwing
         run: zip -q -r "$RUNNER_TEMP/pushwing-openai.zip" .
+      - name: Package the native Codex plugin
+        working-directory: plugins/pushwing-codex
+        run: zip -q -r "$RUNNER_TEMP/pushwing-codex.zip" .
       - uses: actions/upload-artifact@v4
         with:
           name: pushwing-openai
           path: ${{ runner.temp }}/pushwing-openai.zip
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pushwing-codex
+          path: ${{ runner.temp }}/pushwing-codex.zip
           if-no-files-found: error

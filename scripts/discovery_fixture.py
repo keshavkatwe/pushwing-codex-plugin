@@ -5,7 +5,8 @@ from threading import Thread
 
 
 class Fixture:
-    def __init__(self, names, page_size):
+    def __init__(self, names, page_size, *, catalog=None, instructions=None):
+        self.instructions = instructions
         self.names = names
         self.page_size = page_size
         self.mcp_requests = []
@@ -18,6 +19,9 @@ class Fixture:
                 for _ in range(6):
                     schema = {'type': 'object', 'properties': {'nested': schema}}
             self.catalog.append({'name': name, 'description': 'Discovery-only test fixture; execution disabled.', 'inputSchema': schema})
+
+        if catalog is not None:
+            self.catalog = catalog
 
     def __enter__(self):
         fixture = self
@@ -53,6 +57,8 @@ class Fixture:
                     method = data['method']
                     if method == 'initialize':
                         result = {'protocolVersion': '2025-06-18', 'capabilities': {'tools': {}}, 'serverInfo': {'name': 'pushwing-fixture', 'version': '1.0.0'}}
+                        if fixture.instructions is not None:
+                            result['instructions'] = fixture.instructions
                     elif method == 'tools/list':
                         cursor = data.get('params', {}).get('cursor')
                         offset = int(cursor.split(':')[1]) if cursor else 0

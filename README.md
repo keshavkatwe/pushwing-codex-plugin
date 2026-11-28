@@ -95,6 +95,26 @@ the live service. Check your personal allowances and operation availability with
 `pushwing_get_usage_limits`. The plugin does not persist analytics locally. See the [privacy policy](https://pushwing.com/privacy)
 and [terms](https://pushwing.com/terms) for service-side handling.
 
+## Codex marketplace compatibility
+
+Plugin 0.2.2 uses Codex's native package from `plugins/pushwing-codex/` for Git
+marketplace installations. It preserves all 97 tool schemas, the existing OAuth
+connection and all nine workflows. The portable Agent Plugins package remains
+in `plugins/pushwing/` for portable exports and directory submission.
+
+Codex currently applies a shared 64,000-byte schema budget and an 8,000-byte
+per-tool budget to Agent Plugins, silently hiding tools beyond those limits.
+Pushwing's portable package exposes only 33 tools in Codex 0.171.0-alpha.13.
+This is tracked in [OpenAI Codex #44308](https://github.com/openai/codex/issues/44308).
+The native Codex package avoids that client limitation without reducing schemas.
+
+Existing users can refresh the Git marketplace and update their installed plugin:
+
+```sh
+codex plugin marketplace upgrade pushwing-plugins
+codex plugin add pushwing@pushwing-plugins
+```
+
 ## Updates and support
 
 Keep your installed plugin current through your client's marketplace update flow.

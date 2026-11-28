@@ -8,7 +8,7 @@
       "name": "pushwing",
       "source": {
         "source": "local",
-        "path": "./plugins/pushwing"
+        "path": "./plugins/pushwing-codex"
       },
       "policy": {
         "installation": "AVAILABLE",

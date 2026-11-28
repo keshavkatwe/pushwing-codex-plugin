@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pushwing: Status"
+  short_description: "Check jobs and visibility"
+  default_prompt: "Use $pushwing:status to check jobs and visibility."

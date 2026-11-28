@@ -18,15 +18,32 @@ def run(command, cwd, env):
     return result
 
 
-def codex_inventory(root, temporary, fixture, env):
+def codex_inventory(root, temporary, fixture, env, *, legacy_control=False):
     home = temporary/'codex-home'
     home.mkdir()
     marketplace = temporary/'marketplace'
-    package = marketplace/'plugins/pushwing'
-    shutil.copytree(root/'plugins/pushwing', package)
+    data = json.loads((root/'.agents/plugins/marketplace.json').read_text())
+    package_path = data['plugins'][0]['source']['path'].removeprefix('./')
+    data['plugins'][0]['source']['path'] = './'+package_path
+    package = marketplace/package_path
+    shutil.copytree(root/package_path, package)
+    if legacy_control:
+        # Recreate the old format only inside this disposable test installation.
+        native_path = package/'.codex-plugin/plugin.json'
+        native = json.loads(native_path.read_text())
+        manifest = {key: native[key] for key in (
+            'name', 'version', 'description', 'author', 'homepage', 'repository', 'license', 'keywords'
+        )}
+        manifest['$schema'] = 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json'
+        manifest['extensions'] = {'com.openai': {
+            'interface': native['interface'],
+            'onboardingSkill': native['extensions']['com.openai']['onboardingSkill'],
+        }}
+        (package/'plugin.json').write_text(json.dumps(manifest))
+        native_path.unlink()
     catalog = marketplace/'.agents/plugins'
     catalog.mkdir(parents=True)
-    shutil.copyfile(root/'.agents/plugins/marketplace.json', catalog/'marketplace.json')
+    (catalog/'marketplace.json').write_text(json.dumps(data))
     path = package/'mcp.json'
     data = json.loads(path.read_text())
     assert data['mcpServers']['pushwing']['url'] == 'https://mcp.pushwing.com/mcp'
@@ -58,7 +75,7 @@ trust_level = "trusted"
     env['CODEX_HOME'] = str(home)
     run(['codex', 'plugin', 'marketplace', 'add', str(marketplace), '--json'], temporary, env)
     run(['codex', 'plugin', 'add', 'pushwing@pushwing-plugins', '--json'], temporary, env)
-    run(['codex', 'exec', '--ephemeral', '--skip-git-repo-check', '--json', '-C', str(temporary), 'Print the callable Pushwing tool inventory using functions.exec. Do not execute any MCP tools.'], temporary, env)
+    run(['codex', 'exec', '--ephemeral', '--skip-git-repo-check', '--json', '-C', str(temporary), '$pushwing:setup — print the callable Pushwing marketplace tool inventory using functions.exec. Do not execute any MCP tools.'], temporary, env)
     for request in fixture.model_requests:
         for item in request['body'].get('input', []):
             if item.get('type') == 'custom_tool_call_output':
@@ -69,45 +86,34 @@ trust_level = "trusted"
     raise RuntimeError('The native client did not return a code-mode inventory')
 
 
-def claude_inventory(root, temporary, fixture, env):
-    package = temporary/'marketplace'
-    shutil.copytree(root, package, ignore=shutil.ignore_patterns('.git', '__pycache__'))
-    path = package/'.mcp.json'
-    data = json.loads(path.read_text())
-    assert data['mcpServers']['pushwing']['url'] == 'https://mcp.pushwing.com/mcp'
-    data['mcpServers']['pushwing']['url'] = fixture.url+'/mcp'
-    path.write_text(json.dumps(data))
-    env.update({'CLAUDE_CONFIG_DIR': str(temporary/'claude-home'), 'ANTHROPIC_API_KEY': 'discovery-fixture-not-a-real-key', 'ANTHROPIC_BASE_URL': fixture.url, 'ENABLE_TOOL_SEARCH': 'false', 'DISABLE_AUTOUPDATER': '1', 'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC': '1'})
-    run(['claude', 'plugin', 'marketplace', 'add', str(package), '--json'], temporary, env)
-    run(['claude', 'plugin', 'install', 'pushwing@pushwing-plugins'], temporary, env)
-    run(['claude', '--print', '--output-format', 'json', '--no-session-persistence', '--tools', 'Read', '--model', 'claude-sonnet-4-6', '--settings', '{"disableAllHooks":true}', 'This is a discovery-only fixture. Reply Discovery checked. Do not execute any tools.'], temporary, env)
-    messages = [request['body'] for request in fixture.model_requests if request['path'].split('?')[0] == '/v1/messages']
-    tools = [tool for tool in (messages[-1].get('tools', []) if messages else []) if tool.get('name', '').startswith('mcp__')]
-    if not tools:
-        raise RuntimeError('The native client did not advertise MCP tools to the model fixture')
-    return sorted(set(tool['name'] for tool in tools))
-
-
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--host', choices=['codex', 'claude'], required=True)
-    args = parser.parse_args()
+    parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     expected = json.loads(Path(__file__).with_name('expected-tools.json').read_text())['tools']
+    snapshot = json.loads((root/'tests/fixtures/discovery.json').read_text())
+    assert sorted(tool['name'] for tool in snapshot['tools']) == sorted(expected)
     # No credentials or user config are copied into either temporary client profile.
     env = {k:v for k,v in os.environ.items() if not k.startswith(('OPENAI_', 'ANTHROPIC_', 'CLAUDE_', 'CODEX_')) and k != 'CLAUDECODE'}
-    for page_size in (35, 100):
-        with tempfile.TemporaryDirectory(prefix='pushwing-discovery-') as folder, Fixture(expected, page_size) as fixture:
+    for legacy_control, page_size in ((True, 100), (False, 35), (False, 100)):
+        with tempfile.TemporaryDirectory(prefix='pushwing-discovery-') as folder, Fixture(expected, page_size, catalog=snapshot['tools'], instructions=snapshot['instructions']) as fixture:
             temporary = Path(folder)
-            inventory = (codex_inventory if args.host == 'codex' else claude_inventory)(root, temporary, fixture, env.copy())
-            result = check_inventory(inventory, expected)
+            inventory = codex_inventory(root, temporary, fixture, env.copy(), legacy_control=legacy_control)
+            if legacy_control:
+                # Older Codex versions hide Agent Plugin tools once their 64 KB budget is spent.
+                # A future upstream fix may also make the legacy-format control expose all tools.
+                baseline = [name for name in sorted(expected)[:35] if name not in ('pushwing_prepare_publish_preview', 'pushwing_save_workspace_brand')]
+                result = check_inventory(inventory, expected if len(inventory) == len(expected) else baseline)
+                assert len(inventory) in (33, len(expected)), 'Unexpected legacy-format control result'
+            else:
+                result = check_inventory(inventory, expected)
             methods = [request['method'] for request in fixture.mcp_requests]
             assert 'tools/call' not in methods, 'The discovery check must not execute tools'
             cursors = [request.get('params', {}).get('cursor') for request in fixture.mcp_requests if request['method']=='tools/list']
             assert cursors, 'No native MCP discovery request was observed'
             if page_size == 35:
                 assert 'fixture:35' in cursors and 'fixture:70' in cursors, cursors
-            print(json.dumps({'host': args.host, 'pageSize': page_size, **result, 'mcpToolCalls': 0, 'model': 'canned loopback fixture'}), flush=True)
+            print(json.dumps({'host': 'codex', 'package': 'legacy-format control' if legacy_control else 'native marketplace', 'pageSize': page_size, **result, 'mcpToolCalls': 0, 'model': 'canned loopback fixture'}), flush=True)
 
 
 if __name__ == '__main__':

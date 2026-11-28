@@ -2,10 +2,10 @@
 
 - Edit the ready-to-install files under `plugins/pushwing/` directly. Users need
   no build tools, package manager or local server.
-- Preserve the portable manifests, stable names and hosted OAuth endpoint. Keep
+- Preserve the native Codex manifest, stable names and hosted OAuth endpoint. Keep
   all nine workflows self-contained, including account selection, confirmations,
   staging and verified completion.
-- Bump `plugins/pushwing/plugin.json` for shipped changes. Its version is
+- Bump `plugins/pushwing/.codex-plugin/plugin.json` for shipped changes. Its version is
   independent of the MCP service and Claude plugin.
 - The `validate` workflow checks package structure, rejects incomplete tool
   catalogs, tests isolated native marketplace discovery and creates a ZIP artifact.

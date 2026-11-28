@@ -91,3 +91,7 @@ Connected accounts, provider posts, publishing jobs and referenced files remain
 independent. Preserve older catalog fallback and OAuth identity. The release
 keeps nine workflows; installation and host acceptance remain separate from
 source availability and MCP Registry publication.
+
+## Plugin 0.3.1: single publishing preview and scoped approval
+
+The publishing widget is the single media/caption/schedule preview. Its valid Approve schedule click confirms the exact schedule and submits through the original publishing tool without another confirmation question. Normal host approval checks remain; rejections are explained without alternate routes or keyword workarounds. Plain text fallback remains available when the widget cannot render or the user requests it. Source changes only; installation, server deployment and native-host acceptance remain separate.

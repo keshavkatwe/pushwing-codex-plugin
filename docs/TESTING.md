@@ -41,10 +41,10 @@ and the user's installed packages are untouched. No user credentials are copied,
 no provider handlers run and the model returns canned local responses. No paid
 model request or publishing action is required.
 
-The fixture uses the 97 public input schemas recorded from MCP 0.14.2 and long
+The native fixture uses 98 public input schemas verified against MCP 0.15.0 and long
 server instructions, with 35-entry and 100-entry page limits. Codex must expose
 every entry through code-mode `ALL_TOOLS` with a callable handle and follow
-continuation cursors without executing a tool. A test-only old-format manifest
+continuation cursors without executing a tool. The old-format control retains the original 97-tool catalog. Its test-only manifest
 reproduces the observed 33-tool subset; it is never shipped. Missing or
 uncallable native tools fail. Compatible additional tools are allowed.
 
@@ -59,8 +59,9 @@ do not lower its requirements merely to accept an incomplete client.
 Use a new conversation after installing/updating the intended package. Record
 the plugin version, client/build, connection type and server version. Check
 **model-facing availability**, not just the server's `tools/list` count. The
-current baseline is MCP 0.14.2 with 97 tools, including
-`pushwing_prepare_publish_preview`, `pushwing_save_workspace_brand` and all 56
+current baseline is MCP 0.15.0 with 98 tools, including
+`pushwing_prepare_publish_preview`, `pushwing_save_workspace_brand`,
+`pushwing_delete_workspace_brand` and all 56
 YouTube tools.
 
 Export one connection at a time; do not combine duplicate marketplace and custom
@@ -127,7 +128,7 @@ temporary profile using public input schemas and long instructions from
 manifest inside a disposable test copy to reproduce the 33-tool failure. There
 is no second installable plugin in the repository.
 
-The native package must yield all 97 callable tools, including the two large
+The native package must yield all 98 callable tools, including the two large
 workspace tools and every YouTube tool, with both 35- and 100-entry pages. Never
 replace the input schemas with empty objects: that misses the schema-budget bug.
 Output schemas are omitted because this regression concerns input specification
@@ -136,3 +137,14 @@ size. Refresh the snapshot and expected names when the service catalog changes.
 Production acceptance must use the installed Codex package and the production
 endpoint, preserve existing OAuth and exclude custom-connection names. A fresh
 desktop chat's inventory remains separate from these controlled CLI checks.
+
+## Brand-deletion acceptance
+
+Use disposable saved content only when the user explicitly authorizes a live
+deletion test. Verify an ambiguous name is resolved, the unconfirmed call leaves
+records intact, the preview names the full permanent scope, cancellation sends
+no confirmed call, and confirmed deletion removes the brand's saved descendants.
+Check that connected accounts, provider posts, publishing jobs and external files
+remain. An older 97-tool catalog must fail the 98-tool completeness check; a
+missing deletion tool must stop the workflow without a direct HTTP/DB fallback.
+Read-only live catalog verification is separate from these destructive cases.

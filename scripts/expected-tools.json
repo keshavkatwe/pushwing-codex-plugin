@@ -1,11 +1,12 @@
 {
-  "serverVersion": "0.14.2",
+  "serverVersion": "0.15.0",
   "tools": [
     "pushwing_add_workspace_note",
     "pushwing_cancel_publish_job",
     "pushwing_complete_media_upload",
     "pushwing_create_media_upload",
     "pushwing_create_workspace_episode",
+    "pushwing_delete_workspace_brand",
     "pushwing_get_profile",
     "pushwing_get_publish_job",
     "pushwing_get_usage_limits",

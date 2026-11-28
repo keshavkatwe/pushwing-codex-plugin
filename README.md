@@ -97,8 +97,8 @@ and [terms](https://pushwing.com/terms) for service-side handling.
 
 ## Codex marketplace compatibility
 
-Plugin 0.2.2 uses one native Codex package in `plugins/pushwing/`, with its
-manifest at `.codex-plugin/plugin.json`. It preserves all 97 tool schemas, the
+Plugin 0.3.0 retains one native Codex package in `plugins/pushwing/`, with its
+manifest at `.codex-plugin/plugin.json`. It preserves all 98 tool schemas, the
 existing OAuth connection and all nine workflows. No build step is needed.
 
 Codex currently applies a shared 64,000-byte schema budget and an 8,000-byte
@@ -166,16 +166,27 @@ discovery; they do not establish that a desktop installation exposes every tool.
 
 The plugin package supplies nine workflows and declares the hosted MCP connection;
 the live service supplies the tools. Their versions are independent. The current
-MCP 0.14.2 catalog contains **97 tools**, including publishing preview, brand save
+MCP 0.15.0 catalog contains **98 tools**, including publishing preview, brand save, brand deletion
 and 56 YouTube tools.
 
 Plugin versions before 0.2.2 used the Agent Plugins manifest, which makes Codex
 silently hide tools once its schema budget is exhausted. Version 0.2.2 uses the
 native Codex manifest; a fresh Codex CLI check against production exposes all
-97 tools. The custom MCP connection can serve as a fallback. Verify the inventory
+98 tools. The custom MCP connection can serve as a fallback. Verify the inventory
 in a fresh desktop chat separately after updating.
 Check the actual host tool inventory after installation; a server count, package
 validation or reinstall alone does not prove model-facing availability. The
 custom connection and packaged skills are separate: connecting the server does
 not by itself install the nine skills. See [client checks](docs/TESTING.md) for the
 discovery checker and the distinction between automated CLI and desktop acceptance.
+
+## Brand deletion from plugin 0.3.0
+
+Use the existing `brand-setup` workflow to delete a saved brand and all content
+inside it. It requires MCP 0.15.0 and `pushwing_delete_workspace_brand`: select
+the exact brand, inspect its deletion preview and explicitly approve it before
+execution. The brand kit, playbooks, content, revisions, notes and reviews are
+permanently removed. Connected accounts, provider posts, publishing jobs and
+referenced files remain; queued schedules can still run. Cancellation does
+nothing. Older catalogs require a refresh; OAuth reconnection is not a routine
+update step. The nine workflow names and hosted endpoint are unchanged.

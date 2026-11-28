@@ -11,7 +11,7 @@ EXPECTED = json.loads((Path(__file__).resolve().parents[1] / 'scripts/expected-t
 
 class DiscoveryContractTest(unittest.TestCase):
     def test_original_33_tool_catalog_is_rejected(self):
-        inventory = [n for n in sorted(EXPECTED)[:35] if n not in ('pushwing_prepare_publish_preview', 'pushwing_save_workspace_brand')]
+        inventory = [n for n in sorted(n for n in EXPECTED if n != 'pushwing_delete_workspace_brand')[:35] if n not in ('pushwing_prepare_publish_preview', 'pushwing_save_workspace_brand')]
         self.assertEqual(len(inventory), 33)
         with self.assertRaisesRegex(ValueError, 'missing'):
             check_inventory(inventory, EXPECTED)
@@ -19,7 +19,13 @@ class DiscoveryContractTest(unittest.TestCase):
     def test_local_and_custom_connection_names_are_accepted(self):
         for prefix in ('mcp__pushwing__', 'mcp__codex_apps__pushwing_'):
             with self.subTest(prefix=prefix):
-                self.assertEqual(check_inventory([prefix+n for n in EXPECTED], EXPECTED)['required'], 97)
+                self.assertEqual(check_inventory([prefix+n for n in EXPECTED], EXPECTED)['required'], 98)
+
+    def test_previous_97_tool_catalog_is_rejected(self):
+        previous = [n for n in EXPECTED if n != 'pushwing_delete_workspace_brand']
+        self.assertEqual(len(previous), 97)
+        with self.assertRaisesRegex(ValueError, 'pushwing_delete_workspace_brand'):
+            check_inventory(previous, EXPECTED)
 
     def test_listed_but_uncallable_tool_is_rejected(self):
         records = [{'name': n, 'callable': n != 'pushwing_prepare_publish_preview'} for n in EXPECTED]

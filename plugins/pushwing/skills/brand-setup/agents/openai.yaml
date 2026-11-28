@@ -1,4 +1,4 @@
 interface:
-  display_name: "Pushwing: Brand setup"
-  short_description: "Set up brand context and reusable playbooks"
+  display_name: "Pushwing: Manage brand"
+  short_description: "Set up, update or delete a saved brand"
   default_prompt: "Use $pushwing:brand-setup to set up a brand from my existing context."

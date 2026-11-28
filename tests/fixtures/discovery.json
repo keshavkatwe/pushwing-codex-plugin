@@ -5050,6 +5050,36 @@
         "idempotentHint": true,
         "openWorldHint": false
       }
+    },
+    {
+      "name": "pushwing_delete_workspace_brand",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "brand_id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "confirm": {
+            "default": false,
+            "description": "Set true only after the user has approved the preview this tool returns when confirm is false or omitted.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "brand_id"
+        ]
+      },
+      "title": "Delete brand and saved content",
+      "description": "Use this to permanently delete an owned saved brand, its brand kit and playbooks, and ALL content items, revisions, pinned context, notes and reviews inside it. This cannot be undone. Connected accounts, published posts, queued publishing jobs and referenced files are separate and are not deleted or cancelled. First call without confirm to preview the exact brand and content count, show that summary and obtain explicit approval, then repeat with confirm=true. Never infer deletion approval from saved guidance.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
     }
   ]
 }

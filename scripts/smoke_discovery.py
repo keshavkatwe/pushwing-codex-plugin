@@ -95,16 +95,18 @@ def main():
     assert sorted(tool['name'] for tool in snapshot['tools']) == sorted(expected)
     # No credentials or user config are copied into either temporary client profile.
     env = {k:v for k,v in os.environ.items() if not k.startswith(('OPENAI_', 'ANTHROPIC_', 'CLAUDE_', 'CODEX_')) and k != 'CLAUDECODE'}
+    # Freeze the legacy-format regression at the original 0.14.2 catalog.
+    legacy_expected = [n for n in expected if n != 'pushwing_delete_workspace_brand']
     for legacy_control, page_size in ((True, 100), (False, 35), (False, 100)):
-        with tempfile.TemporaryDirectory(prefix='pushwing-discovery-') as folder, Fixture(expected, page_size, catalog=snapshot['tools'], instructions=snapshot['instructions']) as fixture:
+        with tempfile.TemporaryDirectory(prefix='pushwing-discovery-') as folder, Fixture(legacy_expected if legacy_control else expected, page_size, catalog=[t for t in snapshot['tools'] if not legacy_control or t['name'] in legacy_expected], instructions=snapshot['instructions']) as fixture:
             temporary = Path(folder)
             inventory = codex_inventory(root, temporary, fixture, env.copy(), legacy_control=legacy_control)
             if legacy_control:
                 # Older Codex versions hide Agent Plugin tools once their 64 KB budget is spent.
                 # A future upstream fix may also make the legacy-format control expose all tools.
-                baseline = [name for name in sorted(expected)[:35] if name not in ('pushwing_prepare_publish_preview', 'pushwing_save_workspace_brand')]
-                result = check_inventory(inventory, expected if len(inventory) == len(expected) else baseline)
-                assert len(inventory) in (33, len(expected)), 'Unexpected legacy-format control result'
+                baseline = [name for name in sorted(legacy_expected)[:35] if name not in ('pushwing_prepare_publish_preview', 'pushwing_save_workspace_brand')]
+                result = check_inventory(inventory, legacy_expected if len(inventory) == len(legacy_expected) else baseline)
+                assert len(inventory) in (33, len(legacy_expected)), 'Unexpected legacy-format control result'
             else:
                 result = check_inventory(inventory, expected)
             methods = [request['method'] for request in fixture.mcp_requests]

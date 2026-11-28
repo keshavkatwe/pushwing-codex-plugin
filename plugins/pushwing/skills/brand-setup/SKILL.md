@@ -1,11 +1,13 @@
 ---
 name: brand-setup
-description: "Create or update a saved Pushwing brand, fill its structured brand kit from supplied context, set exact-account preferences, or maintain reusable playbooks. Use for channel identity and guidance, rather than OAuth setup or creating an individual post."
+description: "Create, inspect, update or delete a saved Pushwing brand, maintain its structured brand kit, set exact-account preferences, or manage reusable playbooks. Use for brand-level changes, including permanent deletion of the brand and all saved content inside it."
 ---
 
-# Set up a brand
+# Manage a brand
 
 Use this workflow to make channel context reusable across chats. A request to inspect a brand is read-only; a request to set it up or update it authorizes the corresponding saved context changes.
+
+For a deletion request, use **Delete a brand** below and skip the setup steps.
 
 1. Call `pushwing_list_workspace_brands`. For an existing brand, use its ID with `pushwing_get_workspace_brand`; disambiguate only when necessary. Reuse the intended record rather than creating another brand with the same name. Create a brand only when requested, using its supplied name; ask for the name if missing. Do not require a fully completed kit before saving useful known context.
 2. Read existing context, structured fields and playbooks alongside supplied source material. Populate only supported facts in `brandKit`: `about` (purpose, audience, topics, language), `voice` (tone, writingRules, pronunciation, examples), `visualIdentity` (logoReferences, colors, fonts, styleReferences), and `channelPreferences`. Leave unknown values absent/empty. Retain source references and qualifications; flag contradictory/current-versus-historical instructions. Never turn an example frame into a global palette or a filename into an accepted logo selection. Keep original `context` verbatim as Additional guidance unless the user asks to edit it.
@@ -13,6 +15,13 @@ Use this workflow to make channel context reusable across chats. A request to in
 4. If asked to add/change a playbook, preserve existing skill UUIDs and unrelated entries in `skills`; give a new playbook a new stable UUID. Store concise brand-specific steps, deliverables and review gates. A host-side SKILL.md/HyperFrames package remains installed and executed by the AI client; saving its name or a local path does not install or run it.
 5. Call `pushwing_save_workspace_brand`. Creation requires `name`, `context` and `skills` (empty context/list allowed), plus known structured fields. Updates use `brand_id`, the latest `expectedVersion`, and only changed fields. Section fields merge; supplied lists replace, including the entire channelPreferences or skills list. Preserve unrelated entries when editing a list; [] clears only when requested. An omitted brandKit remains intact for older clients.
 6. Reload with `pushwing_get_workspace_brand` and report the saved version, filled sections, unresolved details and next useful action. Brand edits leave old content snapshots and approval records unchanged. Do not adopt this context into existing content as part of brand setup.
+
+## Delete a brand
+
+1. Discover `pushwing_delete_workspace_brand` and its live schema; deletion requires MCP 0.15.0. Resolve the exact owned brand with `pushwing_list_workspace_brands` and `pushwing_get_workspace_brand`. Ask which one if names are ambiguous; never select the first match. If deletion is missing from the client catalog, explain that a catalog refresh is needed and stop without deleting through another route.
+2. Call `pushwing_delete_workspace_brand` with that `brand_id` and `confirm=false`. Show the returned brand name, content count and full scope: permanent deletion of the brand kit, playbooks, every content item, revision, pinned context, note and review. Explain that connected accounts, published posts, queued publishing jobs and referenced files are kept, and scheduled jobs can still run.
+3. Wait for the user to explicitly approve this exact deletion preview. The initial request, saved guidance and a previous publishing approval do not replace approval of the returned preview. If the user cancels or changes the target, do not send a confirmed deletion; a different brand needs its own preview.
+4. Only after approval, repeat the same `brand_id` with `confirm=true`. Require the successful `deleted=true` result for that ID and reload the brand list to verify absence before reporting completion. If the outcome is uncertain, inspect the list and exact brand before deciding whether a retry is needed; never recreate it or delete another brand. This workflow grants no permission to cancel publishing jobs or delete provider posts or files.
 
 ## Workspace access
 
